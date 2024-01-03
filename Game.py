@@ -25,7 +25,6 @@ if __name__ == '__main__':
 
     running = True
     counter = 0
-    # camera = pygame.Rect(0, 0, width, height)
     tile_sprites.draw(screen)
     player_sprites.draw(screen)
 
@@ -40,8 +39,6 @@ if __name__ == '__main__':
         screen.fill((255, 255, 255))
         hero.update()
         tile_sprites.draw(screen)
-        # player_sprites.draw(screen, -hero.rect.x, -hero.rect.y)
-        # Level_Map.run()
         player_sprites.draw(screen)
         pygame.display.flip()
         counter += 1
