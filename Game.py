@@ -49,4 +49,4 @@ if __name__ == '__main__':
         pass
     pygame.quit()
 
-# Проверка_2
+# Проверка_3
