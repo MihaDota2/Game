@@ -8,7 +8,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
         super().__init__(player_sprites)
         self.sprite = image
-        self.image = image
+        self.image = pygame.transform.scale(image, (96, 168))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -53,9 +53,9 @@ class Player(pygame.sprite.Sprite):
             if self.counter > 20:
                 self.counter = 0
             image_spriteR = [self.sprite.subsurface((288, 0, 96, 192)),
-                            self.sprite.subsurface((384, 0, 96, 192))]
+                             self.sprite.subsurface((384, 0, 96, 192))]
             image_spriteL = [self.sprite.subsurface((288, 192, 96, 192)),
-                            self.sprite.subsurface((384, 192, 96, 192))]
+                             self.sprite.subsurface((384, 192, 96, 192))]
             if self.flag_right:
                 image_sprite = image_spriteR
             else:
@@ -76,6 +76,16 @@ class Player(pygame.sprite.Sprite):
                 self.flag_right = False
             elif move[0][0] == -1:
                 self.flag_right = True
+
+    def collision(self):
+        move = self.input()
+        if move:
+            self.rect.top += move[0][1] * self.speed
+            self.rect.left += move[0][0] * self.speed
+            self.rect.top += move[-1][1] * self.speed
+            self.rect.left += move[-1][0] * self.speed
+
+    # def not_move(self):
 
     def update(self):
         self.move()
