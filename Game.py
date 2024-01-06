@@ -85,6 +85,7 @@ if __name__ == '__main__':
         enemy_sprites.draw(screen)
         stick_sprites.draw(screen)
         current_time = pygame.time.get_ticks()
+        #Атака врага
         for enemy in enemy_sprites:
             enemy.attack_player(hero, current_time)
         spell_sprites.draw(screen)
