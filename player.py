@@ -4,7 +4,7 @@ import pygame
 from pygame import display
 
 player_sprites = pygame.sprite.Group()
-hp_image = pygame.image.load("hp.png")
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
@@ -56,6 +56,12 @@ class Player(pygame.sprite.Sprite):
         text_rect = hp_text.get_rect(center=hp_bar_rect.center)
 
         screen.blit(hp_text, text_rect)
+
+    def draw_cd(self, screen, cd):
+        # ratio = cd / 10
+        size = 80
+        ratio = cd / size
+        pygame.draw.rect(screen, (155, 155, 155), (self.rect.x + 52 - 3 * cd, self.rect.y + 170, 6 * cd, 10))
 
     def animation(self):
         move = self.input()

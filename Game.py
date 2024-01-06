@@ -14,6 +14,12 @@ from spell import Spell
 from spell import spell_sprites
 from functions import function_sprites
 from functions import Pause
+from magica import ElementalWheel
+from magica import magica_sprites
+from magica import Elemental
+from magica import elemental_sprites
+from magica import Mode
+from magica import mode_sprites
 
 map_1 = [[1] * 15] * 10
 #здоровье
@@ -45,9 +51,25 @@ if __name__ == '__main__':
     # collision_tile_sprites.draw(screen)
     enemy = Enemy(load_image('Seller.png'), 0, 0, (96, 168), 3, 1)
     stick = Stick(load_image('Stick_2.png'), 500, 500)
-    spell = Spell(load_image('Spell_1.png'), (200, 200), pygame.mouse.get_pos(), (0, 0),
-                  1, 1, 1, 2)
+    spell = Spell(load_image('Spell_1.png'), (0, 0), pygame.mouse.get_pos(), (0, 0),
+                  1, 1, 1, 1, 0)
     pause_btn = Pause(load_image('pause_button.png'), (width // 2 - 192, height // 2 - 192))
+
+    ElementalWheel(load_image('Elemental_Whell_1.png'), (width // 2 - 384, height // 2 - 384))
+    fire = Elemental(load_image('Fire.png'), (width // 2 - 160, height // 2 - 290))
+    water = Elemental(load_image('Water.png'), (width // 2 + 16, height // 2 - 290))
+    earth = Elemental(load_image('Earth.png'), (width // 2 - 304, height // 2 - 170))
+    wing = Elemental(load_image('Wing.png'), (width // 2 + 160, height // 2 - 170))
+    light = Elemental(load_image('Light.png'), (width // 2 + 16, height // 2 + 146))
+    life = Elemental(load_image('Life.png'), (width // 2 - 160, height // 2 + 146))
+    death = Elemental(load_image('Death.png'), (width // 2 + 160, height // 2 + 26))
+    star = Elemental(load_image('Star.png'), (width // 2 - 304, height // 2 + 26))
+    elem_frame = Elemental(load_image('0.png'), (0, 0))
+    mode_sprite = Mode(load_image('Mode_1.png'), (width - 54, height - 54))
+
+    element_type = 1
+    element_mode = 1
+    cooldown = 0
 
     while running:
         for event in pygame.event.get():
@@ -55,18 +77,24 @@ if __name__ == '__main__':
                 running = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 pause = not pause
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                # print(stick.rect.center)
+            if pygame.mouse.get_pressed()[0] and not pause and cooldown == 0:
+                cooldown = 10
                 spell = Spell(load_image('Spell_1.png'), stick.rect.center, pygame.mouse.get_pos(), (32, 32),
-                              1, 12, 1, 3)
+                              element_type, element_mode, 12, 1, 3)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                 if not pause:
                     magica = not magica
 
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_1:
+                element_mode = 1
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_2:
+                element_mode = 2
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_3:
+                element_mode = 3
+
         for spell in spell_sprites:
             if spell.rect.x > width or spell.rect.x < 0:
                 spell_sprites.remove(spell)
-                print(len(spell_sprites))
             if spell.counter == 30 * spell.time:
                 spell_sprites.remove(spell)
 
@@ -77,22 +105,48 @@ if __name__ == '__main__':
             stick.update(hero.rect.center)
             enemy.update([hero.rect.x, hero.rect.y])
             spell_sprites.update()
+            mode_sprite.image = load_image(f'Mode_{element_mode}.png')
+            # Атака врага
+            for enemy in enemy_sprites:
+                enemy.attack_player(hero, pygame.time.get_ticks())
 
         tile_sprites.draw(screen)
         collision_tile_sprites.draw(screen)
         player_sprites.draw(screen)
         hero.draw_hp(screen, hp_bar_image, font) # здоровье
+
+        if cooldown:
+            hero.draw_cd(screen, cooldown)
+            cooldown -= 1
+
         enemy_sprites.draw(screen)
         stick_sprites.draw(screen)
-        current_time = pygame.time.get_ticks()
-        #Атака врага
-        for enemy in enemy_sprites:
-            enemy.attack_player(hero, current_time)
+        mode_sprites.draw(screen)
         spell_sprites.draw(screen)
+
+        if magica:
+            n = 0
+            magica_sprites.draw(screen)
+            elemental_sprites.draw(screen)
+            for elem in elemental_sprites:
+                n += 1
+                if n == 9:
+                    n = 0
+                if elem.rect.collidepoint(pygame.mouse.get_pos()):
+                    elem_frame.image = load_image('Frame.png')
+                    elem_frame.rect = elem.rect
+                    if n != 0 and pygame.mouse.get_pressed()[0]:
+                        element_type = n
+                        magica = False
+                        print(element_type)
+                else:
+                    elem_frame.image = load_image('0.png')
+
         if pause:
             function_sprites.draw(screen)
 
         pygame.display.flip()
+
         counter += 1
         clock.tick(30)
 

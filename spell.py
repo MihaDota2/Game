@@ -1,11 +1,12 @@
 import pygame
 import math
+from functions import load_image
 
 spell_sprites = pygame.sprite.Group()
 
 
 class Spell(pygame.sprite.Sprite):
-    def __init__(self, image, coords, final_coords, size, type, speed, damage, time):
+    def __init__(self, image, coords, final_coords, size, type, mode, speed, damage, time):
         super().__init__(spell_sprites)
         self.sprite = image
         self.image = pygame.transform.scale(image, size)
@@ -18,6 +19,7 @@ class Spell(pygame.sprite.Sprite):
         self.counter = 0
 
         self.type = type
+        self.mode = mode
         self.speed = speed
         self.damage = damage
         self.time = time
@@ -27,6 +29,17 @@ class Spell(pygame.sprite.Sprite):
 
     def animation(self):
         pass
+
+    def elemental(self):
+        if self.mode == 1:
+            if self.type == 1:
+                self.image = load_image('Spell_fire.png')
+            if self.type == 2:
+                self.image = load_image('Spell_water.png')
+            if self.type == 3:
+                self.image = load_image('Spell_earth.png')
+            if self.type == 4:
+                self.image = load_image('Spell_wing.png')
 
     def move(self):
         self.counter += 1
@@ -46,4 +59,5 @@ class Spell(pygame.sprite.Sprite):
 
     def update(self):
         self.move()
+        self.elemental()
         self.animation()
