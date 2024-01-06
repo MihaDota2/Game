@@ -16,8 +16,12 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = y
         self.counter = 0
         self.flag_right = True
-
         self.speed = 5
+
+        self.last_mana_time = pygame.time.get_ticks()
+        self.mana = 100
+        self.max_mana = 100
+
         self.hp = 100
         self.max_hp = 100
 
@@ -56,6 +60,32 @@ class Player(pygame.sprite.Sprite):
         text_rect = hp_text.get_rect(center=hp_bar_rect.center)
 
         screen.blit(hp_text, text_rect)
+
+    def draw_mana(self, screen, mana_bar_image, font):
+        # Размеры изображения полоски маны
+        mana_bar_rect = mana_bar_image.get_rect(topleft=(10, 50))
+
+        # Пропорция текущей маны относительно максимальной
+        mana_ratio = self.mana / self.max_mana
+
+        # Расчет ширины заливаемой части полоски маны
+        fill_width = int(mana_bar_rect.width * mana_ratio)
+
+        # Создание нового поверхностного объекта для заливки
+        fill = pygame.Surface((fill_width, mana_bar_rect.height)).convert_alpha()
+        fill.fill((0, 0, 255))  # Заливка синим цветом
+
+        # Отображение заливки на экране
+        screen.blit(fill, mana_bar_rect.topleft)
+
+        # Отображение изображения полоски маны поверх заливки
+        screen.blit(mana_bar_image, mana_bar_rect.topleft)
+
+        # Отрисовка текста с текущей маной
+        mana_text = font.render(str(self.mana), True, (255, 255, 255))
+        text_rect = mana_text.get_rect(center=mana_bar_rect.center)
+
+        screen.blit(mana_text, text_rect)
 
     def animation(self):
         move = self.input()
@@ -120,3 +150,7 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.move()
         self.animation()
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_mana_time >= 3000:  # 3000 миллисекунд = 3 секунды
+            self.mana = min(self.mana + 20, self.max_mana)
+            self.last_mana_time = current_time

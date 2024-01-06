@@ -82,7 +82,8 @@ if __name__ == '__main__':
         collision_tile_sprites.draw(screen)
         player_sprites.draw(screen)
         hero.draw_hp(screen, hp_bar_image, font) # здоровье
-        enemy_sprites.draw(screen)
+        hero.draw_mana(screen, hp_bar_image, font)
+        # enemy_sprites.draw(screen)
         stick_sprites.draw(screen)
         current_time = pygame.time.get_ticks()
         #Атака врага
