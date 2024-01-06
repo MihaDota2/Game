@@ -1,8 +1,10 @@
 import pygame
 from functions import load_image
+import pygame
+from pygame import display
 
 player_sprites = pygame.sprite.Group()
-
+hp_image = pygame.image.load("hp.png")
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, image, x, y):
@@ -16,6 +18,8 @@ class Player(pygame.sprite.Sprite):
         self.flag_right = True
 
         self.speed = 5
+        self.hp = 100
+        self.max_hp = 100
 
     def input(self):
         move_map = {pygame.K_w: (0, 1),
@@ -26,6 +30,32 @@ class Player(pygame.sprite.Sprite):
         pressed = pygame.key.get_pressed()
         move = [move_map[key] for key in move_map if pressed[key]]
         return move
+
+    def draw_hp(self, screen, hp_bar_image, font):
+        # Размеры изображения полоски здоровья
+        hp_bar_rect = hp_bar_image.get_rect(topleft=(10, 10))
+
+        # Пропорция текущего здоровья относительно максимального
+        hp_ratio = self.hp / self.max_hp
+
+        # Расчёт ширины заливаемой части полоски здоровья
+        fill_width = int(hp_bar_rect.width * hp_ratio)
+
+        # Создание нового поверхностного объекта для заливки
+        fill = pygame.Surface((fill_width, hp_bar_rect.height)).convert_alpha()
+        fill.fill((255, 0, 0))  # Заливка красным цветом
+
+        # Отображение заливки на экране
+        screen.blit(fill, hp_bar_rect.topleft)
+
+        # Отображение изображения полоски здоровья поверх заливки
+        screen.blit(hp_bar_image, hp_bar_rect.topleft)
+
+        # Отрисовка текста с текущим здоровьем
+        hp_text = font.render(str(self.hp), True, (255, 255, 255))
+        text_rect = hp_text.get_rect(center=hp_bar_rect.center)
+
+        screen.blit(hp_text, text_rect)
 
     def animation(self):
         move = self.input()

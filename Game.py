@@ -16,6 +16,9 @@ from functions import function_sprites
 from functions import Pause
 
 map_1 = [[1] * 15] * 10
+#здоровье
+pygame.font.init()  # Инициализация модуля шрифтов
+font = pygame.font.Font(None, 36)  # Создание объекта шрифта
 
 if __name__ == '__main__':
     pygame.init()
@@ -24,6 +27,8 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
 
     hero = Player(load_image('AnimationListCharacter_3.png'), width // 2 - 48, height // 2 - 96)
+    # Загрузка изображения полоски здоровья
+    hp_bar_image = load_image('hp.png', color_key=-1)
     move = hero.input()
 
     running = True
@@ -75,8 +80,8 @@ if __name__ == '__main__':
 
         tile_sprites.draw(screen)
         collision_tile_sprites.draw(screen)
-
         player_sprites.draw(screen)
+        hero.draw_hp(screen, hp_bar_image, font) # здоровье
         # enemy_sprites.draw(screen)
         stick_sprites.draw(screen)
         spell_sprites.draw(screen)
