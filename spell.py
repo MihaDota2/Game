@@ -1,0 +1,49 @@
+import pygame
+import math
+
+spell_sprites = pygame.sprite.Group()
+
+
+class Spell(pygame.sprite.Sprite):
+    def __init__(self, image, coords, final_coords, size, type, speed, damage, time):
+        super().__init__(spell_sprites)
+        self.sprite = image
+        self.image = pygame.transform.scale(image, size)
+        self.rect = self.image.get_rect()
+        self.rect.x = coords[0]
+        self.rect.y = coords[1]
+        # self.final_coords = final_coords
+        self.x = final_coords[0] - self.rect.x
+        self.y = final_coords[1] - self.rect.y
+        self.counter = 0
+
+        self.type = type
+        self.speed = speed
+        self.damage = damage
+        self.time = time
+
+    def input(self):
+        pass
+
+    def animation(self):
+        pass
+
+    def move(self):
+        self.counter += 1
+        x = self.x
+        y = self.y
+        vector_x = (1 if x > 0 else -1)
+        vector_y = (1 if y > 0 else -1)
+        if x != 0 and y != 0 and abs(x) > self.speed and abs(y) > self.speed:
+            if max(abs(x), abs(y)) == abs(x):
+                self.rect.x += self.speed * vector_x
+                self.rect.y += self.speed * vector_y * (abs(y) / abs(x))
+            else:
+                self.rect.x += self.speed * vector_x * (abs(x) / abs(y))
+                self.rect.y += self.speed * vector_y
+        else:
+            self.rect.x += self.speed * vector_x
+
+    def update(self):
+        self.move()
+        self.animation()

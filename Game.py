@@ -8,6 +8,12 @@ from player import Player
 from player import player_sprites
 from enemy import Enemy
 from enemy import enemy_sprites
+from stick import Stick
+from stick import stick_sprites
+from spell import Spell
+from spell import spell_sprites
+from functions import function_sprites
+from functions import Pause
 
 map_1 = [[1] * 15] * 10
 
@@ -21,6 +27,8 @@ if __name__ == '__main__':
     move = hero.input()
 
     running = True
+    pause = False
+    magica = False
     counter = 0
     tile_sprites.draw(screen)
     player_sprites.draw(screen)
@@ -31,20 +39,50 @@ if __name__ == '__main__':
     tile_sprites.draw(screen)
     # collision_tile_sprites.draw(screen)
     enemy = Enemy(load_image('Seller.png'), 0, 0, (96, 168), 3, 1)
+    stick = Stick(load_image('Stick_2.png'), 500, 500)
+    spell = Spell(load_image('Spell_1.png'), (200, 200), pygame.mouse.get_pos(), (0, 0),
+                  1, 1, 1, 2)
+    pause_btn = Pause(load_image('pause_button.png'), (width // 2 - 192, height // 2 - 192))
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                pause = not pause
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # print(stick.rect.center)
+                spell = Spell(load_image('Spell_1.png'), stick.rect.center, pygame.mouse.get_pos(), (32, 32),
+                              1, 12, 1, 3)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+                if not pause:
+                    magica = not magica
+
+        for spell in spell_sprites:
+            if spell.rect.x > width or spell.rect.x < 0:
+                spell_sprites.remove(spell)
+                print(len(spell_sprites))
+            if spell.counter == 30 * spell.time:
+                spell_sprites.remove(spell)
+
         screen.fill((255, 255, 255))
-        hero.update()
-        enemy.update([hero.rect.x, hero.rect.y])
+
+        if not pause and not magica:
+            hero.update()
+            stick.update(hero.rect.center)
+            enemy.update([hero.rect.x, hero.rect.y])
+            spell_sprites.update()
 
         tile_sprites.draw(screen)
         collision_tile_sprites.draw(screen)
 
         player_sprites.draw(screen)
-        enemy_sprites.draw(screen)
+        # enemy_sprites.draw(screen)
+        stick_sprites.draw(screen)
+        spell_sprites.draw(screen)
+        if pause:
+            function_sprites.draw(screen)
+
         pygame.display.flip()
         counter += 1
         clock.tick(30)
@@ -61,5 +99,3 @@ if __name__ == '__main__':
     pygame.display.flip()
     while pygame.event.wait().type != pygame.QUIT:
         pygame.quit()
-
-# Проверка_2
