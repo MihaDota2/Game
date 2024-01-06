@@ -38,10 +38,15 @@ class Enemy(pygame.sprite.Sprite):
         y = coords[1] - self.rect.y
         vector_x = (1 if x > 0 else -1)
         vector_y = (1 if y > 0 else -1)
-        if x != 0:
+        if x != 0 and y != 0 and abs(x) > self.speed and abs(y) > self.speed:
+            if max(abs(x), abs(y)) == abs(x):
+                self.rect.x += self.speed * vector_x
+                self.rect.y += self.speed * vector_y * (abs(y) / abs(x))
+            else:
+                self.rect.x += self.speed * vector_x * (abs(x) / abs(y))
+                self.rect.y += self.speed * vector_y
+        else:
             self.rect.x += self.speed * vector_x
-        if y != 0:
-            self.rect.y += self.speed * vector_y
 
     def collision(self):
         pass

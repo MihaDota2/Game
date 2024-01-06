@@ -79,8 +79,10 @@ if __name__ == '__main__':
                 pause = not pause
             if pygame.mouse.get_pressed()[0] and not pause and cooldown == 0:
                 cooldown = 10
-                spell = Spell(load_image('Spell_1.png'), stick.rect.center, pygame.mouse.get_pos(), (32, 32),
+                if hero.mana > 0:
+                    spell = Spell(load_image('Spell_1.png'), stick.rect.center, pygame.mouse.get_pos(), (32, 32),
                               element_type, element_mode, 12, 1, 3)
+                    hero.mana -= 20
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                 if not pause:
                     magica = not magica
@@ -91,6 +93,7 @@ if __name__ == '__main__':
                 element_mode = 2
             if event.type == pygame.KEYDOWN and event.key == pygame.K_3:
                 element_mode = 3
+
 
         for spell in spell_sprites:
             if spell.rect.x > width or spell.rect.x < 0:
@@ -119,6 +122,7 @@ if __name__ == '__main__':
             hero.draw_cd(screen, cooldown)
             cooldown -= 1
 
+        hero.draw_mana(screen, hp_bar_image, font)
         enemy_sprites.draw(screen)
         stick_sprites.draw(screen)
         mode_sprites.draw(screen)
