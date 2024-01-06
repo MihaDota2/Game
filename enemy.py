@@ -12,12 +12,23 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.counter = 0
+        self.last_attack_time = pygame.time.get_ticks()
+        self.attack_radius = 20
 
         self.speed = speed
         self.damage = damage
 
     def input(self):
         pass
+
+    def attack_player(self, player, current_time):
+        # Расчет расстояния до игрока
+        distance = pygame.math.Vector2(self.rect.center) - pygame.math.Vector2(player.rect.center)
+        if distance.length() <= self.attack_radius:
+            # Проверка, прошло ли 5 секунд с последней атаки
+            if current_time - self.last_attack_time > 3000:  # 5000 миллисекунд = 5 секунд
+                player.hp -= 20  # Нанесение урона игроку
+                self.last_attack_time = current_time  # Обновление времени последней атаки
 
     def animation(self):
         pass
