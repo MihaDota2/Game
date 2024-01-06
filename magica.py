@@ -1,12 +1,12 @@
 import pygame
 import math
 
-spell_sprites = pygame.sprite.Group()
+magica_sprites = pygame.sprite.Group()
 
 
-class Spell(pygame.sprite.Sprite):
+class ElementalWheel(pygame.sprite.Sprite):
     def __init__(self, image, coords):
-        super().__init__(spell_sprites)
+        super().__init__(magica_sprites)
         self.sprite = image
         # self.image = pygame.transform.scale(image, size)
         self.image = image
