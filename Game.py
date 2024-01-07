@@ -22,7 +22,7 @@ from magica import Mode
 from magica import mode_sprites
 
 map_1 = [[1] * 15] * 10
-#здоровье
+# здоровье
 pygame.font.init()  # Инициализация модуля шрифтов
 font = pygame.font.Font(None, 36)  # Создание объекта шрифта
 
@@ -49,7 +49,10 @@ if __name__ == '__main__':
 
     tile_sprites.draw(screen)
     # collision_tile_sprites.draw(screen)
-    enemy = Enemy(load_image('Seller.png'), 0, 0, (96, 168), 3, 1)
+    enemy0 = Enemy(load_image('Seller.png'), 0, 0, (96, 168), 3, 1, 2, load_image('Star.png'))
+    enemy1 = Enemy(load_image('Seller.png'), 96, 0, (96, 168), 3, 1, 2, load_image('Star.png'))
+    enemy2 = Enemy(load_image('Seller.png'), 12, 0, (96, 168), 3, 1, 9000, load_image('Star.png'))
+
     stick = Stick(load_image('Stick_2.png'), 500, 500)
     spell = Spell(load_image('Spell_1.png'), (0, 0), pygame.mouse.get_pos(), (0, 0),
                   1, 1, 1, 1, 0)
@@ -81,7 +84,7 @@ if __name__ == '__main__':
                 cooldown = 10
                 if hero.mana > 0:
                     spell = Spell(load_image('Spell_1.png'), stick.rect.center, pygame.mouse.get_pos(), (32, 32),
-                              element_type, element_mode, 12, 1, 3)
+                                  element_type, element_mode, 12, 1, 3)
                     hero.mana -= 20
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                 if not pause:
@@ -94,7 +97,6 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN and event.key == pygame.K_3:
                 element_mode = 3
 
-
         for spell in spell_sprites:
             if spell.rect.x > width or spell.rect.x < 0:
                 spell_sprites.remove(spell)
@@ -106,24 +108,33 @@ if __name__ == '__main__':
         if not pause and not magica:
             hero.update()
             stick.update(hero.rect.center)
-            enemy.update([hero.rect.x, hero.rect.y])
+            enemy_sprites.update([hero.rect.x, hero.rect.y])
             spell_sprites.update()
             mode_sprite.image = load_image(f'Mode_{element_mode}.png')
-            # Атака врага
-            for enemy in enemy_sprites:
+            # Атака врага и нанесение урона врагу, смерть врага
+            for enemy in enemy_sprites.sprites():
                 enemy.attack_player(hero, pygame.time.get_ticks())
+                for spell in spell_sprites.sprites():
+                    if pygame.sprite.spritecollideany(enemy, spell_sprites):
+                        enemy.taking_damage(spell.damage)
+                        pygame.sprite.groupcollide(enemy_sprites, spell_sprites, False, True)
+                if enemy.hp <= 0:
+                    print(enemy.die_counter)
+                    enemy.die()
+                    if enemy.die_counter == 60:
+                        enemy_sprites.remove(enemy)
 
         tile_sprites.draw(screen)
         collision_tile_sprites.draw(screen)
         player_sprites.draw(screen)
-        hero.draw_hp(screen, hp_bar_image, font) # здоровье
+        enemy_sprites.draw(screen)
+        hero.draw_hp(screen, hp_bar_image, font)  # здоровье
 
         if cooldown:
             hero.draw_cd(screen, cooldown)
             cooldown -= 1
 
         hero.draw_mana(screen, hp_bar_image, font)
-        enemy_sprites.draw(screen)
         stick_sprites.draw(screen)
         mode_sprites.draw(screen)
         spell_sprites.draw(screen)
@@ -142,7 +153,6 @@ if __name__ == '__main__':
                     if n != 0 and pygame.mouse.get_pressed()[0]:
                         element_type = n
                         magica = False
-                        print(element_type)
                 else:
                     elem_frame.image = load_image('0.png')
 
@@ -157,11 +167,6 @@ if __name__ == '__main__':
         if (pygame.sprite.spritecollideany(hero, collision_tile_sprites) or hero.rect.top < 0 or hero.rect.top > 792
                 or hero.rect.left < 0 or hero.rect.right > 1440):
             hero.collision()
-        # if pygame.sprite.spritecollideany(hero, enemy_sprites):
-        #     print(1)
-
-        # elif pygame.sprite.spritecollideany(hero, tile_sprites):
-        #     print(len(tile_sprites))
 
     pygame.display.flip()
     while pygame.event.wait().type != pygame.QUIT:
