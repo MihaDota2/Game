@@ -4,7 +4,7 @@ enemy_sprites = pygame.sprite.Group()
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, image, x, y, size, speed, damage):
+    def __init__(self, image, x, y, size, speed, damage, hp, die_im):
         super().__init__(enemy_sprites)
         self.sprite = image
         self.image = pygame.transform.scale(image, size)
@@ -17,6 +17,11 @@ class Enemy(pygame.sprite.Sprite):
 
         self.speed = speed
         self.damage = damage
+        self.hp = hp
+        self.damage_counter = 0
+        self.die_counter = 0
+        self.die_image = die_im
+        self.image_copy = self.image
 
     def input(self):
         pass
@@ -30,8 +35,29 @@ class Enemy(pygame.sprite.Sprite):
                 player.hp -= 20  # Нанесение урона игроку
                 self.last_attack_time = current_time  # Обновление времени последней атаки
 
+    def taking_damage(self, damage):
+        self.damage_counter = 30
+        self.hp -= damage
+
+    def die(self):
+        self.die_counter += 1
+        self.speed = 0
+        self.image = self.die_image
+
     def animation(self):
         pass
+        # if self.damage_counter:
+        #     pass
+        #     colorImage = pygame.Surface(self.image_copy.get_size()).convert_alpha()
+        #     colorImage.fill((255, 0, 0))
+        #     self.image.blit(colorImage, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+        #     self.damage_counter -= 1
+        #     print(self.damage_counter)
+        # else:
+        #     colorImage = pygame.Surface(self.image_copy.get_size()).convert_alpha()
+        #     colorImage.fill((0, 0, 0))
+        #     self.image.blit(colorImage, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+
 
     def move(self, coords):
         x = coords[0] - self.rect.x
@@ -45,7 +71,9 @@ class Enemy(pygame.sprite.Sprite):
             else:
                 self.rect.x += self.speed * vector_x * (abs(x) / abs(y))
                 self.rect.y += self.speed * vector_y
-        else:
+        if abs(x) < self.speed:
+            self.rect.y += self.speed * vector_y
+        if abs(y) < self.speed:
             self.rect.x += self.speed * vector_x
 
     def collision(self):
