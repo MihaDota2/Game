@@ -1,4 +1,6 @@
 import os
+import random
+
 import pygame
 from functions import load_image
 from map import Map
@@ -20,7 +22,7 @@ from magica import Elemental
 from magica import elemental_sprites
 from magica import Mode
 from magica import mode_sprites
-from Volna import  draw_wave_button
+from Volna import draw_wave_button
 
 map_1 = [[1] * 15] * 10
 # здоровье
@@ -76,11 +78,17 @@ if __name__ == '__main__':
     element_type = 1
     element_mode = 1
     cooldown = 0
+    current_wave = 1
 
 
     def spawn_wave(current_wave):
         enemies = []  # Создаем пустой список для хранения врагов
-        enemy_positions = [(0, 0), (96, 0), (12, 0), (24, 0)]  # Позиции для каждого врага в волне
+        pos = random.choice([[[0, width], [0, 96]], [[0, width], [height - 96, height]], [[width - 96, width], [0, 96]],
+                             [[width - 96, width], [height - 96, height]]])
+        enemy_positions = [[random.randint(pos[0][0], pos[0][1]),
+                            random.randint(pos[1][0], pos[1][1])] for _ in
+                           range(current_wave * 2 + 1)]  # Позиции для каждого врага в волне
+        print(enemy_positions)
         for i in range(len(enemy_positions)):
             if i < len(enemy_positions):
                 enemy_position = enemy_positions[i]
@@ -90,8 +98,6 @@ if __name__ == '__main__':
         return enemies  # Возвращаем список созданных врагов
 
 
-    current_wave = 1
-
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -100,7 +106,7 @@ if __name__ == '__main__':
                 pause = not pause
             if pygame.mouse.get_pressed()[0] and not pause and cooldown == 0:
                 cooldown = 10
-                if hero.mana > 0:
+                if hero.mana > 20:
                     spell = Spell(load_image('Spell_1.png'), stick.rect.center, pygame.mouse.get_pos(), (32, 32),
                                   element_type, element_mode, 12, 1, 3)
                     hero.mana -= 20
@@ -137,11 +143,14 @@ if __name__ == '__main__':
             for enemy in enemy_sprites.sprites():
                 enemy.attack_player(hero, pygame.time.get_ticks())
                 for spell in spell_sprites.sprites():
+                    if spell.rect.x > width or spell.rect.x < 0:
+                        spell_sprites.remove(spell)
+                    if spell.counter == 30 * spell.time:
+                        spell_sprites.remove(spell)
                     if pygame.sprite.spritecollideany(enemy, spell_sprites):
                         enemy.taking_damage(spell.damage)
                         pygame.sprite.groupcollide(enemy_sprites, spell_sprites, False, True)
                 if enemy.hp <= 0:
-                    print(enemy.die_counter)
                     enemy.die()
                     if enemy.die_counter == 60:
                         enemy_sprites.remove(enemy)
@@ -150,7 +159,6 @@ if __name__ == '__main__':
         collision_tile_sprites.draw(screen)
         player_sprites.draw(screen)
         enemy_sprites.draw(screen)
-        draw_wave_button(screen, font, current_wave)
         hero.draw_hp(screen, hp_bar_image, font)  # здоровье
 
         if cooldown:
@@ -161,6 +169,7 @@ if __name__ == '__main__':
         stick_sprites.draw(screen)
         mode_sprites.draw(screen)
         spell_sprites.draw(screen)
+        draw_wave_button(screen, font, current_wave)
 
         if magica:
             n = 0

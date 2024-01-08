@@ -157,6 +157,6 @@ class Player(pygame.sprite.Sprite):
         self.move()
         self.animation()
         current_time = pygame.time.get_ticks()
-        if current_time - self.last_mana_time >= 3000:  # 3000 миллисекунд = 3 секунды
-            self.mana = min(self.mana + 20, self.max_mana)
+        if current_time - self.last_mana_time >= 100:  # 3000 миллисекунд = 3 секунды
+            self.mana = min(self.mana + 1, self.max_mana)
             self.last_mana_time = current_time
