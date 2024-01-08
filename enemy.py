@@ -1,6 +1,7 @@
 import pygame
 
 enemy_sprites = pygame.sprite.Group()
+import random
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -34,7 +35,7 @@ class Enemy(pygame.sprite.Sprite):
         if distance.length() <= self.attack_radius:
             # Проверка, прошло ли 5 секунд с последней атаки
             if current_time - self.last_attack_time > 3000:  # 5000 миллисекунд = 5 секунд
-                player.hp -= 20  # Нанесение урона игроку
+                player.hp -= 0  # Нанесение урона игроку
                 self.last_attack_time = current_time  # Обновление времени последней атаки
 
     def taking_damage(self, damage):
@@ -44,7 +45,7 @@ class Enemy(pygame.sprite.Sprite):
     def die(self):
         self.die_counter += 1
         self.speed = 0
-        self.image = self.die_image
+        self.image = pygame.transform.scale(self.die_image, (66, 48))
 
     def animation(self):
         pass
@@ -54,7 +55,7 @@ class Enemy(pygame.sprite.Sprite):
         #     colorImage.fill((255, 0, 0))
         #     self.image.blit(colorImage, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
         #     self.damage_counter -= 1
-        #     print(self.damage_counter)
+        #     print(salf.damage_counter)
         # else:
         #     colorImage = pygame.Surface(self.image_copy.get_size()).convert_alpha()
         #     colorImage.fill((0, 0, 0))
@@ -84,7 +85,34 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.top -= self.vector_y * self.speed * k
         self.rect.left -= self.vector_x * self.speed * k
 
-    # def not_move(self):
+    def enemy_collision(self, object, k):
+        speed = object.speed
+        vector = [object.vector_x, object.vector_y]
+        coords = [object.rect.x, object.rect.y]
+        x = coords[0] - self.rect.x
+        y = coords[1] - self.rect.y
+        vector_x = (1 if x > 0 else -1)
+        vector_y = (1 if y > 0 else -1)
+
+        self.rect.left -= vector_x * self.speed * k
+        self.rect.top -= vector_y * self.speed * k
+
+        print(speed, vector, coords)
+
+        # v = random.choice([-1, 1])
+        #
+        # # move = self.input()
+        # self.rect.top -= v * self.vector_y * self.speed * k
+        # self.rect.left -= v * self.vector_x * self.speed * k
+
+
+    # def collision(self):
+    #     move = self.input()
+    #     if move:
+    #         self.rect.top += move[0][1] * self.speed
+    #         self.rect.left += move[0][0] * self.speed
+    #         self.rect.top += move[-1][1] * self.speed
+    #         self.rect.left += move[-1][0] * self.speed
 
     def update(self, coords):
         self.move(coords)

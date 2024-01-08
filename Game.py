@@ -25,6 +25,8 @@ from magica import mode_sprites
 from Volna import draw_wave_button
 
 map_1 = [[1] * 15] * 10
+map_1 = [[0, 1, 0, 0, 0]] * 2
+
 # здоровье
 pygame.font.init()  # Инициализация модуля шрифтов
 font = pygame.font.Font(None, 36)  # Создание объекта шрифта
@@ -99,11 +101,13 @@ if __name__ == '__main__':
 
     def spawn_wave(current_wave):
         enemies = []  # Создаем пустой список для хранения врагов
-        pos = random.choice([[[0, width], [0, 96]], [[0, width], [height - 96, height]], [[0, 96], [0, height]],
+        pos = random.choice([[[0, width], [-96, 0]],
+                             [[0, width], [height - 96, height]],
+                             [[0, 96], [0, height]],
                              [[width - 96, width], [0, height]]])
         enemy_positions = [[random.randint(pos[0][0], pos[0][1]),
                             random.randint(pos[1][0], pos[1][1])] for _ in
-                           range(current_wave * 2 + 3)]  # Позиции для каждого врага в волне
+                           range(current_wave)]  # Позиции для каждого врага в волне
         for i in range(len(enemy_positions)):
             if i < len(enemy_positions):
                 enemy_position = enemy_positions[i]
@@ -169,6 +173,17 @@ if __name__ == '__main__':
             mode_sprite.image = load_image(f'Mode_{element_mode}.png')
             # Атака врага и нанесение урона врагу, смерть врага
             for enemy in enemy_sprites.sprites():
+                # print(pygame.sprite.spritecollide(enemy, enemy_sprites.sprites(), False))
+
+                col_enemys = pygame.sprite.spritecollide(enemy, enemy_sprites.sprites(), False)
+                if len(col_enemys) > 1:
+                    for i in range(len(col_enemys) - 1):
+                        if i % 2 == 0:
+                            col_enemys[i].enemy_collision(col_enemys[i + 1], 0.7)
+                            col_enemys[i + 1].enemy_collision(col_enemys[i], 0.7)
+
+                # if pygame.sprite.spritecollideany(enemy, elemental_sprites):
+                #     enemy.collision(1)
                 enemy.attack_player(hero, pygame.time.get_ticks())
                 for spell in spell_sprites.sprites():
                     if spell.rect.x > width or spell.rect.x < 0:
