@@ -80,20 +80,27 @@ if __name__ == '__main__':
     cooldown = 0
     current_wave = 1
 
+    hero_spell_damage = 1
+    hero_spell_speed = 4
+    hero_spell_mana = 10
+    hero_spell_time = 3
+
+    spell_types_spec = {1: (1, 1, 1), 2: (1, 1, 1), 3: (2, 0.6, 2), 4: (0.5, 2.2, 0.5), 5: (1, 1, 1), 6: (1, 1, 1),
+                        7: (1, 1, 1), 8: (1, 1, 1)}
+
 
     def spawn_wave(current_wave):
         enemies = []  # Создаем пустой список для хранения врагов
-        pos = random.choice([[[0, width], [0, 96]], [[0, width], [height - 96, height]], [[width - 96, width], [0, 96]],
-                             [[width - 96, width], [height - 96, height]]])
+        pos = random.choice([[[0, width], [0, 96]], [[0, width], [height - 96, height]], [[0, 96], [0, height]],
+                             [[width - 96, width], [0, height]]])
         enemy_positions = [[random.randint(pos[0][0], pos[0][1]),
                             random.randint(pos[1][0], pos[1][1])] for _ in
-                           range(current_wave * 2 + 1)]  # Позиции для каждого врага в волне
-        print(enemy_positions)
+                           range(current_wave * 2 + 3)]  # Позиции для каждого врага в волне
         for i in range(len(enemy_positions)):
             if i < len(enemy_positions):
                 enemy_position = enemy_positions[i]
             enemy = Enemy(load_image('Seller.png'), enemy_position[0], enemy_position[1], (96, 168), 3, 1, 2,
-                          load_image('Star.png'))
+                          load_image('Die_sprite.png'))
             enemies.append(enemy)  # Добавляем врага в список
         return enemies  # Возвращаем список созданных врагов
 
@@ -105,11 +112,15 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 pause = not pause
             if pygame.mouse.get_pressed()[0] and not pause and cooldown == 0:
-                cooldown = 10
-                if hero.mana > 20:
-                    spell = Spell(load_image('Spell_1.png'), stick.rect.center, pygame.mouse.get_pos(), (32, 32),
-                                  element_type, element_mode, 12, 1, 3)
-                    hero.mana -= 20
+                if element_mode == 1:
+                    cooldown = 10
+                    mana_cell = hero_spell_mana * spell_types_spec[element_type][2]
+                    hero_speed = hero_spell_damage * spell_types_spec[element_type][1]
+                    hero_damage = hero_spell_damage * spell_types_spec[element_type][0]
+                    if hero.mana > mana_cell:
+                        spell = Spell(load_image('Spell_1.png'), stick.rect.center, pygame.mouse.get_pos(), (32, 32),
+                                      element_type, element_mode, hero_speed, hero_damage, hero_spell_time)
+                        hero.mana -= mana_cell
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                 if not pause:
                     magica = not magica

@@ -58,6 +58,6 @@ class Spell(pygame.sprite.Sprite):
             self.rect.x += self.speed * vector_x
 
     def update(self):
-        self.move()
         self.elemental()
+        self.move()
         self.animation()
