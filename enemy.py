@@ -4,7 +4,7 @@ enemy_sprites = pygame.sprite.Group()
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, image, x, y, size, speed, damage, hp, die_im):
+    def __init__(self, image, x, y, size, speed, damage, hp, die_im, slow):
         super().__init__(enemy_sprites)
         self.sprite = image
         self.image = pygame.transform.scale(image, size)
@@ -22,6 +22,8 @@ class Enemy(pygame.sprite.Sprite):
         self.die_counter = 0
         self.die_image = die_im
         self.image_copy = self.image
+
+        self.slow = False
 
     def input(self):
         pass
@@ -58,12 +60,13 @@ class Enemy(pygame.sprite.Sprite):
         #     colorImage.fill((0, 0, 0))
         #     self.image.blit(colorImage, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
 
-
     def move(self, coords):
         x = coords[0] - self.rect.x
         y = coords[1] - self.rect.y
         vector_x = (1 if x > 0 else -1)
         vector_y = (1 if y > 0 else -1)
+        self.vector_x = vector_x
+        self.vector_y = vector_y
         if x != 0 and y != 0 and abs(x) > self.speed and abs(y) > self.speed:
             if max(abs(x), abs(y)) == abs(x):
                 self.rect.x += self.speed * vector_x
@@ -76,14 +79,10 @@ class Enemy(pygame.sprite.Sprite):
         if abs(y) < self.speed:
             self.rect.x += self.speed * vector_x
 
-    def collision(self):
-        pass
+    def collision(self, k):
         # move = self.input()
-        # if move:
-        #     self.rect.top += move[0][1] * self.speed
-        #     self.rect.left += move[0][0] * self.speed
-        #     self.rect.top += move[-1][1] * self.speed
-        #     self.rect.left += move[-1][0] * self.speed
+        self.rect.top -= self.vector_y * self.speed * k
+        self.rect.left -= self.vector_x * self.speed * k
 
     # def not_move(self):
 

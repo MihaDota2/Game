@@ -40,6 +40,15 @@ class Spell(pygame.sprite.Sprite):
                 self.image = load_image('Spell_earth.png')
             if self.type == 4:
                 self.image = load_image('Spell_wing.png')
+        if self.mode == 2:
+            if self.type == 1:
+                self.image = load_image('Build_fire.png')
+            if self.type == 2:
+                self.image = load_image('Build_water.png')
+            if self.type == 3:
+                self.image = load_image('Build_earth.png')
+            if self.type == 4:
+                self.image = load_image('Build_wing.png')
 
     def move(self):
         self.counter += 1

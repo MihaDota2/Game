@@ -30,6 +30,7 @@ class Stick(pygame.sprite.Sprite):
         new_image = pygame.transform.rotate(self.image_copy, angle - 45)
         # self.rect = new_image.get_rect(center=self.rect.center)
         self.rect = new_image.get_rect(center=center)
+
         self.rect.y += 24
         self.image = new_image
 

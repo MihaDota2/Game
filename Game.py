@@ -85,8 +85,16 @@ if __name__ == '__main__':
     hero_spell_mana = 10
     hero_spell_time = 3
 
-    spell_types_spec = {1: (1, 1, 1), 2: (1, 1, 1), 3: (2, 0.6, 2), 4: (0.5, 2.2, 0.5), 5: (1, 1, 1), 6: (1, 1, 1),
-                        7: (1, 1, 1), 8: (1, 1, 1)}
+    slow_timer = 0
+
+    spell_types_spec = {1: ((1, 1, 1), (1, 1, 1), (1, 1, 1)),
+                        2: ((1, 1, 1), (1, 1, 1), (1, 1, 1)),
+                        3: ((2, 0.6, 2), (0, 0, 2), (1, 1, 1)),
+                        4: ((0.5, 2.2, 0.5), (1, 1, 1), (1, 1, 1)),
+                        5: ((1, 1, 1), (1, 1, 1), (1, 1, 1)),
+                        6: ((1, 1, 1), (1, 1, 1), (1, 1, 1)),
+                        7: ((1, 1, 1), (1, 1, 1), (1, 1, 1)),
+                        8: ((1, 1, 1), (1, 1, 1), (1, 1, 1))}
 
 
     def spawn_wave(current_wave):
@@ -100,7 +108,7 @@ if __name__ == '__main__':
             if i < len(enemy_positions):
                 enemy_position = enemy_positions[i]
             enemy = Enemy(load_image('Seller.png'), enemy_position[0], enemy_position[1], (96, 168), 3, 1, 2,
-                          load_image('Die_sprite.png'))
+                          load_image('Die_sprite.png'), False)
             enemies.append(enemy)  # Добавляем врага в список
         return enemies  # Возвращаем список созданных врагов
 
@@ -114,11 +122,20 @@ if __name__ == '__main__':
             if pygame.mouse.get_pressed()[0] and not pause and cooldown == 0:
                 if element_mode == 1:
                     cooldown = 10
-                    mana_cell = hero_spell_mana * spell_types_spec[element_type][2]
-                    hero_speed = hero_spell_damage * spell_types_spec[element_type][1]
-                    hero_damage = hero_spell_damage * spell_types_spec[element_type][0]
+                    mana_cell = hero_spell_mana * spell_types_spec[element_type][0][2]
+                    hero_speed = hero_spell_speed * spell_types_spec[element_type][0][1]
+                    hero_damage = hero_spell_damage * spell_types_spec[element_type][0][0]
                     if hero.mana > mana_cell:
                         spell = Spell(load_image('Spell_1.png'), stick.rect.center, pygame.mouse.get_pos(), (32, 32),
+                                      element_type, element_mode, hero_speed, hero_damage, hero_spell_time)
+                        hero.mana -= mana_cell
+                if element_mode == 2:
+                    cooldown = 20
+                    mana_cell = hero_spell_mana * spell_types_spec[element_type][1][2]
+                    hero_speed = 0
+                    hero_damage = hero_spell_damage * spell_types_spec[element_type][1][0]
+                    if hero.mana > mana_cell:
+                        spell = Spell(load_image('Spell_1.png'), (pygame.mouse.get_pos()[0] - 48, pygame.mouse.get_pos()[1] - 48), pygame.mouse.get_pos(), (32, 32),
                                       element_type, element_mode, hero_speed, hero_damage, hero_spell_time)
                         hero.mana -= mana_cell
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
@@ -158,9 +175,31 @@ if __name__ == '__main__':
                         spell_sprites.remove(spell)
                     if spell.counter == 30 * spell.time:
                         spell_sprites.remove(spell)
-                    if pygame.sprite.spritecollideany(enemy, spell_sprites):
-                        enemy.taking_damage(spell.damage)
-                        pygame.sprite.groupcollide(enemy_sprites, spell_sprites, False, True)
+                    # if pygame.sprite.collide_rect(enemy, spell):
+                    #     enemy.collision(4)
+                    if spell.mode == 1:
+                        if pygame.sprite.spritecollideany(enemy, spell_sprites):
+                            pygame.sprite.groupcollide(enemy_sprites, spell_sprites, False, True)
+                            enemy.taking_damage(spell.damage)
+                    if spell.mode == 2:
+                        if pygame.sprite.spritecollideany(enemy, spell_sprites):
+                            if spell.type == 1:
+                                if counter % 30 == 0:
+                                    enemy.taking_damage(spell.damage)
+                            if spell.type == 2:
+                                if not enemy.slow:
+                                    enemy.slow = True
+                                    slow_timer = counter
+                                    enemy.speed = 0.9
+                                # if counter - slow_timer == 120:
+                                #     enemy.slow = False
+                                #     enemy.speed *= 200
+                                # print(counter - slow_timer)
+                            if spell.type == 4:
+                                enemy.update(spell.rect)
+                            if spell.type == 3:
+                                enemy.collision(1)
+
                 if enemy.hp <= 0:
                     enemy.die()
                     if enemy.die_counter == 60:
