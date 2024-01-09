@@ -97,8 +97,6 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.left -= vector_x * self.speed * k
         self.rect.top -= vector_y * self.speed * k
 
-        print(speed, vector, coords)
-
         # v = random.choice([-1, 1])
         #
         # # move = self.input()

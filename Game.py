@@ -25,7 +25,6 @@ from magica import mode_sprites
 from Volna import draw_wave_button
 
 map_1 = [[1] * 15] * 10
-map_1 = [[0, 1, 0, 0, 0]] * 2
 
 # здоровье
 pygame.font.init()  # Инициализация модуля шрифтов
@@ -101,13 +100,18 @@ if __name__ == '__main__':
 
     def spawn_wave(current_wave):
         enemies = []  # Создаем пустой список для хранения врагов
-        pos = random.choice([[[0, width], [-96, 0]],
-                             [[0, width], [height - 96, height]],
-                             [[0, 96], [0, height]],
-                             [[width - 96, width], [0, height]]])
-        enemy_positions = [[random.randint(pos[0][0], pos[0][1]),
-                            random.randint(pos[1][0], pos[1][1])] for _ in
-                           range(current_wave)]  # Позиции для каждого врага в волне
+        pos = [[[0, width], [-96, 0]],
+               [[0, width], [height - 96, height]],
+               [[0, 96], [0, height]],
+               [[width - 96, width], [0, height]]]
+        x = random.choice(pos)[0][0], random.choice(pos)[0][1]
+        y = random.choice(pos)[1][0], random.choice(pos)[1][1]
+        enemy_positions = [[random.randint(min(x), max(x)), random.randint(min(y), max(y))] for _ in
+                           range(current_wave)]
+        print(enemy_positions)
+        # enemy_positions = [[random.randint(pos[0][0], pos[0][1]),
+        #                     random.randint(pos[1][0], pos[1][1])] for _ in
+        #                    range(current_wave)]  # Позиции для каждого врага в волне
         for i in range(len(enemy_positions)):
             if i < len(enemy_positions):
                 enemy_position = enemy_positions[i]
@@ -139,7 +143,9 @@ if __name__ == '__main__':
                     hero_speed = 0
                     hero_damage = hero_spell_damage * spell_types_spec[element_type][1][0]
                     if hero.mana > mana_cell:
-                        spell = Spell(load_image('Spell_1.png'), (pygame.mouse.get_pos()[0] - 48, pygame.mouse.get_pos()[1] - 48), pygame.mouse.get_pos(), (32, 32),
+                        spell = Spell(load_image('Spell_1.png'),
+                                      (pygame.mouse.get_pos()[0] - 48, pygame.mouse.get_pos()[1] - 48),
+                                      pygame.mouse.get_pos(), (32, 32),
                                       element_type, element_mode, hero_speed, hero_damage, hero_spell_time)
                         hero.mana -= mana_cell
             if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
@@ -154,7 +160,7 @@ if __name__ == '__main__':
                 element_mode = 3
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == pygame.BUTTON_LEFT and button_rect.collidepoint(event.pos):
-                    spawn_wave(current_wave)
+                    spawn_wave(1)
                     current_wave += 1
 
         for spell in spell_sprites:
