@@ -25,6 +25,7 @@ from magica import mode_sprites
 from Volna import draw_wave_button
 
 map_1 = [[1] * 15] * 10
+# map_1 = [[1] * 2, [0] * 2] * 2
 
 # здоровье
 pygame.font.init()  # Инициализация модуля шрифтов
@@ -84,7 +85,7 @@ if __name__ == '__main__':
     hero_spell_damage = 1
     hero_spell_speed = 4
     hero_spell_mana = 10
-    hero_spell_time = 3
+    hero_spell_time = 2
 
     slow_timer = 0
 
