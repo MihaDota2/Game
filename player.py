@@ -25,6 +25,9 @@ class Player(pygame.sprite.Sprite):
         self.hp = 100
         self.max_hp = 100
 
+        self.energy = 0
+        self.max_energy = 10
+
     def input(self):
         move_map = {pygame.K_w: (0, 1),
                     pygame.K_s: (0, -1),
@@ -86,6 +89,32 @@ class Player(pygame.sprite.Sprite):
         text_rect = mana_text.get_rect(center=mana_bar_rect.center)
 
         screen.blit(mana_text, text_rect)
+
+    def draw_energy(self, screen, energy_bar_image, font):
+        # Размеры изображения полоски энергии
+        energy_bar_rect = energy_bar_image.get_rect(topleft=(10, 90))
+
+        # Пропорция текущей энергии относительно максимальной
+        energy_ratio = self.energy / self.max_energy
+
+        # Расчет ширины заливаемой части полоски энергии
+        fill_width = int(energy_bar_rect.width * energy_ratio)
+
+        # Создание нового поверхностного объекта для заливки
+        fill = pygame.Surface((fill_width, energy_bar_rect.height)).convert_alpha()
+        fill.fill((255, 255, 0))  # Заливка желтым цветом
+
+        # Отображение заливки на экране
+        screen.blit(fill, energy_bar_rect.topleft)
+
+        # Отображение изображения полоски энергии поверх заливки
+        screen.blit(energy_bar_image, energy_bar_rect.topleft)
+
+        # Отрисовка текста с текущей энергией
+        energy_text = font.render(str(self.energy), True, (255, 255, 255))
+        text_rect = energy_text.get_rect(center=energy_bar_rect.center)
+
+        screen.blit(energy_text, text_rect)
 
     def draw_cd(self, screen, cd):
         # ratio = cd / 10

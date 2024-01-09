@@ -256,11 +256,13 @@ if __name__ == '__main__':
                     enemy.die()
                     if enemy.die_counter == 60:
                         enemy_sprites.remove(enemy)
+                        hero.energy += 1
 
         tile_sprites.draw(screen)
         collision_tile_sprites.draw(screen)
         player_sprites.draw(screen)
         enemy_sprites.draw(screen)
+        hero.draw_energy(screen, hp_bar_image, font)
         hero.draw_hp(screen, hp_bar_image, font)  # здоровье
 
         if cooldown:
