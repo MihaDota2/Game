@@ -97,6 +97,32 @@ if __name__ == '__main__':
                         7: ((1, 1, 1), (1, 1, 1), (1, 1, 1)),
                         8: ((1, 1, 1), (1, 1, 1), (1, 1, 1))}
 
+    # Enemy(load_image('Seller.png'), enemy_position[0], enemy_position[1], (96, 168), 3, 1, 2,
+    #               load_image('Die_sprite.png'), False)
+
+    enemy_sprite_image = load_image('Enemy_list.png')
+    enemy_spec = {1: ([load_image('Enemy_list.png').subsurface((288, 0, 96, 96)),
+                       load_image('Enemy_list.png').subsurface((384, 0, 96, 96))],
+                      (96, 96), 3, 1, 5, load_image('Die_sprite.png')),
+                  2: ([load_image('Enemy_list.png').subsurface((0, 0, 96, 192)),
+                       load_image('Enemy_list.png').subsurface((0, 0, 96, 192)),
+                       load_image('Enemy_list.png').subsurface((0, 0, 96, 192))],
+                      (96, 168), 3, 1, 5, load_image('Die_sprite.png')),
+                  3: ([load_image('Enemy_list.png').subsurface((0, 0, 96, 192)),
+                       load_image('Enemy_list.png').subsurface((0, 0, 96, 192)),
+                       load_image('Enemy_list.png').subsurface((0, 0, 96, 192))],
+                      (96, 168), 3, 1, 5, load_image('Die_sprite.png')),
+                  4: ([load_image('Enemy_list.png').subsurface((0, 0, 96, 192)),
+                       load_image('Enemy_list.png').subsurface((0, 0, 96, 192)),
+                       load_image('Enemy_list.png').subsurface((0, 0, 96, 192))],
+                      (96, 168), 3, 1, 5, load_image('Die_sprite.png'))}
+
+    wave_dif = {1: (),
+                2: (),
+                3: (),
+                4: (),
+                5: ()}
+
 
     def spawn_wave(current_wave):
         enemies = []  # Создаем пустой список для хранения врагов
@@ -115,8 +141,13 @@ if __name__ == '__main__':
         for i in range(len(enemy_positions)):
             if i < len(enemy_positions):
                 enemy_position = enemy_positions[i]
-            enemy = Enemy(load_image('Seller.png'), enemy_position[0], enemy_position[1], (96, 168), 3, 1, 2,
-                          load_image('Die_sprite.png'), False)
+            # enemy = Enemy(load_image('Seller.png'), enemy_position[0], enemy_position[1], (96, 168), 3, 1, 2,
+            #               load_image('Die_sprite.png'), False)
+
+            print(enemy_spec[1][0][0], enemy_spec[1][0], enemy_position[0], enemy_position[1], enemy_spec[1][1],
+                  enemy_spec[1][2], enemy_spec[1][3], enemy_spec[1][4], enemy_spec[1][5])
+            enemy = Enemy(enemy_spec[1][0][0], enemy_spec[1][0], enemy_position[0], enemy_position[1], enemy_spec[1][1],
+                  enemy_spec[1][2], enemy_spec[1][3], enemy_spec[1][4], enemy_spec[1][5])
             enemies.append(enemy)  # Добавляем врага в список
         return enemies  # Возвращаем список созданных врагов
 

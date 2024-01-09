@@ -5,10 +5,11 @@ import random
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, image, x, y, size, speed, damage, hp, die_im, slow):
+    def __init__(self, image, anim, x, y, size, speed, damage, hp, die_im):
         super().__init__(enemy_sprites)
         self.sprite = image
         self.image = pygame.transform.scale(image, size)
+        self.anim_image = anim
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -48,18 +49,22 @@ class Enemy(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.die_image, (66, 48))
 
     def animation(self):
-        pass
-        # if self.damage_counter:
-        #     pass
-        #     colorImage = pygame.Surface(self.image_copy.get_size()).convert_alpha()
-        #     colorImage.fill((255, 0, 0))
-        #     self.image.blit(colorImage, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
-        #     self.damage_counter -= 1
-        #     print(salf.damage_counter)
-        # else:
-        #     colorImage = pygame.Surface(self.image_copy.get_size()).convert_alpha()
-        #     colorImage.fill((0, 0, 0))
-        #     self.image.blit(colorImage, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+        self.counter += 1
+        if self.counter == 30:
+            self.counter = 0
+        k = len(self.anim_image)
+        if k == 3:
+            if 0 <= self.counter < 10:
+                self.image = self.anim_image[0]
+            elif 10 <= self.counter < 20:
+                self.image = self.anim_image[1]
+            else:
+                self.image = self.anim_image[2]
+        elif k == 2:
+            if 0 <= self.counter < 15:
+                self.image = self.anim_image[0]
+            else:
+                self.image = self.anim_image[1]
 
     def move(self, coords):
         x = coords[0] - self.rect.x
