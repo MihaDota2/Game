@@ -256,8 +256,8 @@ if __name__ == '__main__':
                     enemy.die()
                     if enemy.die_counter == 60:
                         enemy_sprites.remove(enemy)
-                        hero.energy += 1
-
+                        if hero.energy <= 9:
+                            hero.energy += 1
         tile_sprites.draw(screen)
         collision_tile_sprites.draw(screen)
         player_sprites.draw(screen)
