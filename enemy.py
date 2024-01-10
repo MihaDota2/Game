@@ -37,7 +37,7 @@ class Enemy(pygame.sprite.Sprite):
         if distance.length() <= self.attack_radius:
             # Проверка, прошло ли 5 секунд с последней атаки
             if current_time - self.last_attack_time > 2000:  # 5000 миллисекунд = 5 секунд
-                player.hp -= self.damage  # Нанесение урона игроку
+                player.hp -= 0  # Нанесение урона игроку
                 self.last_attack_time = current_time  # Обновление времени последней атаки
 
     def taking_damage(self, damage):

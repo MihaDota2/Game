@@ -65,15 +65,16 @@ if __name__ == '__main__':
                   1, 1, 1, 1, 0)
     pause_btn = Pause(load_image('pause_button.png'), (width // 2 - 192, height // 2 - 192))
 
-    ElementalWheel(load_image('Elemental_Whell_1.png'), (width // 2 - 384, height // 2 - 384))
+    ElementalWheel(load_image('Whill_1.png'), (width // 2 - 384, height // 2 - 384))
     fire = Elemental(load_image('Fire.png'), (width // 2 - 160, height // 2 - 290))
     water = Elemental(load_image('Water.png'), (width // 2 + 16, height // 2 - 290))
     earth = Elemental(load_image('Earth.png'), (width // 2 - 304, height // 2 - 170))
     wing = Elemental(load_image('Wing.png'), (width // 2 + 160, height // 2 - 170))
-    light = Elemental(load_image('Light.png'), (width // 2 + 16, height // 2 + 146))
-    life = Elemental(load_image('Life.png'), (width // 2 - 160, height // 2 + 146))
-    death = Elemental(load_image('Death.png'), (width // 2 + 160, height // 2 + 26))
-    star = Elemental(load_image('Star.png'), (width // 2 - 304, height // 2 + 26))
+    # light = Elemental(load_image('Light.png'), (width // 2 + 16, height // 2 + 146))
+    # life = Elemental(load_image('Life.png'), (width // 2 - 160, height // 2 + 146))
+    # death = Elemental(load_image('Death.png'), (width // 2 + 160, height // 2 + 26))
+    # star = Elemental(load_image('Star.png'), (width // 2 - 304, height // 2 + 26))
+
     elem_frame = Elemental(load_image('0.png'), (0, 0))
     mode_sprite = Mode(load_image('Mode_1.png'), (width - 54, height - 54))
 
@@ -160,8 +161,8 @@ if __name__ == '__main__':
         for i in range(len(enemy_positions)):
             if i < len(enemy_positions):
                 enemy_position = enemy_positions[i]
-            # enemy = Enemy(load_image('Seller.png'), enemy_position[0], enemy_position[1], (96, 168), 3, 1, 2,
-            #               load_image('Die_sprite.png'), False)
+                # enemy = Enemy(load_image('Seller.png'), enemy_position[0], enemy_position[1], (96, 168), 3, 1, 2,
+                #               load_image('Die_sprite.png'), False)
                 enemy_type = enemy_spec[random.choice(en_type)]
             enemy = Enemy(enemy_type[0][0], enemy_type[0], enemy_position[0], enemy_position[1], enemy_type[1],
                           enemy_type[2], enemy_type[3], enemy_type[4], enemy_type[5])
@@ -207,14 +208,17 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN and event.key == pygame.K_3:
                 element_mode = 3
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if len(enemy_sprites) == 0:
-                    if event.button == pygame.BUTTON_LEFT and button_rect.collidepoint(event.pos):
-                        print(wave_dif[current_wave // 9 + 1][1], wave_dif[current_wave // 9 + 1][0])
-                        if current_wave % 10 == 0:
-                            spawn_wave(wave_dif[current_wave][1], wave_dif[current_wave][0])
-                        else:
-                            spawn_wave(wave_dif[current_wave // 9 + 1][1] + current_wave // 2, wave_dif[current_wave // 9 + 1][0])
-                        current_wave += 1
+                # if len(enemy_sprites) == 0:
+                if event.button == pygame.BUTTON_LEFT and button_rect.collidepoint(event.pos):
+                    if current_wave % 10 == 0 and current_wave <= 40:
+                        spawn_wave(wave_dif[current_wave][1], wave_dif[current_wave][0])
+                    elif current_wave < 45:
+                        spawn_wave(wave_dif[current_wave // 9 + 1][1] + current_wave // 2,
+                                   wave_dif[current_wave // 9 + 1][0])
+                    else:
+                        spawn_wave(wave_dif[5][1] + current_wave // 2,
+                                   wave_dif[5][0])
+                    current_wave += 1
 
         if len(enemy_sprites) == 0:
             btn_color = (174, 186, 0)
@@ -314,7 +318,8 @@ if __name__ == '__main__':
                     elem_frame.image = load_image('Frame.png')
                     elem_frame.rect = elem.rect
                     if n != 0 and pygame.mouse.get_pressed()[0]:
-                        element_type = n
+                        if n != 5:
+                            element_type = n
                         magica = False
                 else:
                     elem_frame.image = load_image('0.png')
