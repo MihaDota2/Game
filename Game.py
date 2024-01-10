@@ -89,6 +89,8 @@ if __name__ == '__main__':
 
     slow_timer = 0
 
+    btn_color = (174, 186, 0)
+
     spell_types_spec = {1: ((1, 1, 1), (1, 1, 1), (1, 1, 1)),
                         2: ((1, 1, 1), (1, 1, 1), (1, 1, 1)),
                         3: ((2, 0.6, 2), (0, 0, 2), (1, 1, 1)),
@@ -104,28 +106,45 @@ if __name__ == '__main__':
     enemy_sprite_image = load_image('Enemy_list.png')
     enemy_spec = {1: ([load_image('Enemy_list.png').subsurface((288, 0, 96, 96)),
                        load_image('Enemy_list.png').subsurface((384, 0, 96, 96))],
-                      (96, 96), 3, 1, 5, load_image('Die_sprite.png')),
+                      (96, 96), 3, 5, 3, load_image('Die_sprite.png')),
                   2: ([load_image('Enemy_list.png').subsurface((0, 0, 96, 192)),
-                       load_image('Enemy_list.png').subsurface((0, 0, 96, 192)),
-                       load_image('Enemy_list.png').subsurface((0, 0, 96, 192))],
-                      (96, 168), 3, 1, 5, load_image('Die_sprite.png')),
-                  3: ([load_image('Enemy_list.png').subsurface((0, 0, 96, 192)),
-                       load_image('Enemy_list.png').subsurface((0, 0, 96, 192)),
-                       load_image('Enemy_list.png').subsurface((0, 0, 96, 192))],
-                      (96, 168), 3, 1, 5, load_image('Die_sprite.png')),
-                  4: ([load_image('Enemy_list.png').subsurface((0, 0, 96, 192)),
-                       load_image('Enemy_list.png').subsurface((0, 0, 96, 192)),
-                       load_image('Enemy_list.png').subsurface((0, 0, 96, 192))],
-                      (96, 168), 3, 1, 5, load_image('Die_sprite.png'))}
+                       load_image('Enemy_list.png').subsurface((96, 0, 96, 192)),
+                       load_image('Enemy_list.png').subsurface((192, 0, 96, 192))],
+                      (96, 168), 4, 6, 4, load_image('Die_sprite.png')),
+                  3: ([load_image('Enemy_list.png').subsurface((0, 192, 96, 192)),
+                       load_image('Enemy_list.png').subsurface((96, 192, 96, 192)),
+                       load_image('Enemy_list.png').subsurface((192, 192, 96, 192))],
+                      (96, 168), 3, 10, 4, load_image('Die_sprite.png')),
+                  4: ([load_image('Enemy_list.png').subsurface((288, 192, 96, 96)),
+                       load_image('Enemy_list.png').subsurface((384, 192, 96, 96))],
+                      (96, 96), 5, 15, 5, load_image('Die_sprite.png')),
+                  10: ([load_image('Enemy_list.png').subsurface((288, 0, 96, 96)),
+                        load_image('Enemy_list.png').subsurface((384, 0, 96, 96))],
+                       (240, 240), 3, 20, 50, load_image('Die_sprite.png')),
+                  20: ([load_image('Enemy_list.png').subsurface((0, 0, 96, 192)),
+                        load_image('Enemy_list.png').subsurface((96, 0, 96, 192)),
+                        load_image('Enemy_list.png').subsurface((192, 0, 96, 192))],
+                       (240, 480), 3, 30, 65, load_image('Die_sprite.png')),
+                  30: ([load_image('Enemy_list.png').subsurface((0, 192, 96, 192)),
+                        load_image('Enemy_list.png').subsurface((96, 192, 96, 192)),
+                        load_image('Enemy_list.png').subsurface((192, 192, 96, 192))],
+                       (240, 480), 3, 35, 70, load_image('Die_sprite.png')),
+                  40: ([load_image('Enemy_list.png').subsurface((288, 192, 96, 96)),
+                        load_image('Enemy_list.png').subsurface((384, 192, 96, 96))],
+                       (240, 240), 3, 45, 75, load_image('Die_sprite.png'))}
 
-    wave_dif = {1: (),
-                2: (),
-                3: (),
-                4: (),
-                5: ()}
+    wave_dif = {1: ((1,), 5),
+                10: ((10,), 1),
+                2: ((1, 2), 8),
+                20: ((20,), 1),
+                3: ((1, 2, 3), 14),
+                30: ((30,), 1),
+                4: ((1, 2, 3, 4), 16),
+                40: ((40,), 1),
+                5: ((1, 2, 3, 4), 20)}
 
 
-    def spawn_wave(current_wave):
+    def spawn_wave(col, en_type):
         enemies = []  # Создаем пустой список для хранения врагов
         pos = [[[0, width], [-96, 0]],
                [[0, width], [height - 96, height]],
@@ -134,8 +153,7 @@ if __name__ == '__main__':
         x = random.choice(pos)[0][0], random.choice(pos)[0][1]
         y = random.choice(pos)[1][0], random.choice(pos)[1][1]
         enemy_positions = [[random.randint(min(x), max(x)), random.randint(min(y), max(y))] for _ in
-                           range(current_wave)]
-        print(enemy_positions)
+                           range(col)]
         # enemy_positions = [[random.randint(pos[0][0], pos[0][1]),
         #                     random.randint(pos[1][0], pos[1][1])] for _ in
         #                    range(current_wave)]  # Позиции для каждого врага в волне
@@ -144,11 +162,9 @@ if __name__ == '__main__':
                 enemy_position = enemy_positions[i]
             # enemy = Enemy(load_image('Seller.png'), enemy_position[0], enemy_position[1], (96, 168), 3, 1, 2,
             #               load_image('Die_sprite.png'), False)
-
-            print(enemy_spec[1][0][0], enemy_spec[1][0], enemy_position[0], enemy_position[1], enemy_spec[1][1],
-                  enemy_spec[1][2], enemy_spec[1][3], enemy_spec[1][4], enemy_spec[1][5])
-            enemy = Enemy(enemy_spec[1][0][0], enemy_spec[1][0], enemy_position[0], enemy_position[1], enemy_spec[1][1],
-                  enemy_spec[1][2], enemy_spec[1][3], enemy_spec[1][4], enemy_spec[1][5])
+                enemy_type = enemy_spec[random.choice(en_type)]
+            enemy = Enemy(enemy_type[0][0], enemy_type[0], enemy_position[0], enemy_position[1], enemy_type[1],
+                          enemy_type[2], enemy_type[3], enemy_type[4], enemy_type[5])
             enemies.append(enemy)  # Добавляем врага в список
         return enemies  # Возвращаем список созданных врагов
 
@@ -191,9 +207,19 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN and event.key == pygame.K_3:
                 element_mode = 3
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == pygame.BUTTON_LEFT and button_rect.collidepoint(event.pos):
-                    spawn_wave(1)
-                    current_wave += 1
+                if len(enemy_sprites) == 0:
+                    if event.button == pygame.BUTTON_LEFT and button_rect.collidepoint(event.pos):
+                        print(wave_dif[current_wave // 9 + 1][1], wave_dif[current_wave // 9 + 1][0])
+                        if current_wave % 10 == 0:
+                            spawn_wave(wave_dif[current_wave][1], wave_dif[current_wave][0])
+                        else:
+                            spawn_wave(wave_dif[current_wave // 9 + 1][1] + current_wave // 2, wave_dif[current_wave // 9 + 1][0])
+                        current_wave += 1
+
+        if len(enemy_sprites) == 0:
+            btn_color = (174, 186, 0)
+        else:
+            btn_color = (155, 155, 155)
 
         for spell in spell_sprites:
             if spell.rect.x > width or spell.rect.x < 0:
@@ -206,7 +232,7 @@ if __name__ == '__main__':
         if not pause and not magica:
             hero.update()
             stick.update(hero.rect.center)
-            enemy_sprites.update([hero.rect.x, hero.rect.y])
+            enemy_sprites.update([hero.rect.x, hero.rect.y], screen)
             spell_sprites.update()
             mode_sprite.image = load_image(f'Mode_{element_mode}.png')
             # Атака врага и нанесение урона врагу, смерть врага
@@ -249,7 +275,7 @@ if __name__ == '__main__':
                                 #     enemy.speed *= 200
                                 # print(counter - slow_timer)
                             if spell.type == 4:
-                                enemy.update(spell.rect)
+                                enemy.update(spell.rect, screen)
                             if spell.type == 3:
                                 enemy.collision(1)
 
@@ -274,7 +300,7 @@ if __name__ == '__main__':
         stick_sprites.draw(screen)
         mode_sprites.draw(screen)
         spell_sprites.draw(screen)
-        draw_wave_button(screen, font, current_wave)
+        draw_wave_button(screen, font, current_wave, btn_color)
 
         if magica:
             n = 0

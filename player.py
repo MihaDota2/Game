@@ -118,8 +118,8 @@ class Player(pygame.sprite.Sprite):
 
     def draw_cd(self, screen, cd):
         # ratio = cd / 10
-        size = 80
-        ratio = cd / size
+        # size = 80
+        # ratio = cd / size
         pygame.draw.rect(screen, (155, 155, 155), (self.rect.x + 52 - 3 * cd, self.rect.y + 170, 6 * cd, 10))
 
     def animation(self):

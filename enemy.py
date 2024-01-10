@@ -15,7 +15,8 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y = y
         self.counter = 0
         self.last_attack_time = pygame.time.get_ticks()
-        self.attack_radius = 20
+        self.attack_radius = 80
+        self.size = size
 
         self.speed = speed
         self.damage = damage
@@ -35,12 +36,12 @@ class Enemy(pygame.sprite.Sprite):
         distance = pygame.math.Vector2(self.rect.center) - pygame.math.Vector2(player.rect.center)
         if distance.length() <= self.attack_radius:
             # Проверка, прошло ли 5 секунд с последней атаки
-            if current_time - self.last_attack_time > 3000:  # 5000 миллисекунд = 5 секунд
-                player.hp -= 0  # Нанесение урона игроку
+            if current_time - self.last_attack_time > 2000:  # 5000 миллисекунд = 5 секунд
+                player.hp -= self.damage  # Нанесение урона игроку
                 self.last_attack_time = current_time  # Обновление времени последней атаки
 
     def taking_damage(self, damage):
-        self.damage_counter = 30
+        # self.damage_counter = 15
         self.hp -= damage
 
     def die(self):
@@ -49,22 +50,24 @@ class Enemy(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.die_image, (66, 48))
 
     def animation(self):
+        if self.damage_counter != 0:
+            self.damage_counter -= 1
         self.counter += 1
         if self.counter == 30:
             self.counter = 0
         k = len(self.anim_image)
         if k == 3:
             if 0 <= self.counter < 10:
-                self.image = self.anim_image[0]
+                self.image = pygame.transform.scale(self.anim_image[0], self.size)
             elif 10 <= self.counter < 20:
-                self.image = self.anim_image[1]
+                self.image = pygame.transform.scale(self.anim_image[1], self.size)
             else:
-                self.image = self.anim_image[2]
+                self.image = pygame.transform.scale(self.anim_image[2], self.size)
         elif k == 2:
             if 0 <= self.counter < 15:
-                self.image = self.anim_image[0]
+                self.image = pygame.transform.scale(self.anim_image[0], self.size)
             else:
-                self.image = self.anim_image[1]
+                self.image = pygame.transform.scale(self.anim_image[1], self.size)
 
     def move(self, coords):
         x = coords[0] - self.rect.x
@@ -108,7 +111,6 @@ class Enemy(pygame.sprite.Sprite):
         # self.rect.top -= v * self.vector_y * self.speed * k
         # self.rect.left -= v * self.vector_x * self.speed * k
 
-
     # def collision(self):
     #     move = self.input()
     #     if move:
@@ -117,6 +119,6 @@ class Enemy(pygame.sprite.Sprite):
     #         self.rect.top += move[-1][1] * self.speed
     #         self.rect.left += move[-1][0] * self.speed
 
-    def update(self, coords):
+    def update(self, coords, screen):
         self.move(coords)
         self.animation()
