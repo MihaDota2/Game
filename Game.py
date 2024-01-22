@@ -33,6 +33,8 @@ font = pygame.font.Font(None, 36)  # Создание объекта шрифт�
 
 if __name__ == '__main__':
     pygame.init()
+    pygame.mixer.music.load('music.mp3')
+    pygame.mixer.music.play(-1)
     size = width, height = 1440, 960
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
@@ -208,6 +210,8 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN and event.key == pygame.K_3:
                 element_mode = 3
             if event.type == pygame.MOUSEBUTTONDOWN:
+                magic_sound = pygame.mixer.Sound('magic.mp3')
+                magic_sound.play()
                 # if len(enemy_sprites) == 0:
                 if event.button == pygame.BUTTON_LEFT and button_rect.collidepoint(event.pos):
                     if current_wave % 10 == 0 and current_wave <= 40:
