@@ -27,6 +27,9 @@ from Volna import draw_wave_button
 map_1 = [[1] * 15] * 10
 # map_1 = [[1] * 2, [0] * 2] * 2
 
+with open('record.txt', 'r') as file:
+    max_kill_count = int(file.read())
+
 # здоровье
 pygame.font.init()  # Инициализация модуля шрифтов
 font = pygame.font.Font(None, 36)  # Создание объекта шрифта
@@ -44,6 +47,9 @@ if __name__ == '__main__':
     # Загрузка изображения полоски здоровья
     hp_bar_image = load_image('hp.png', color_key=-1)
     move = hero.input()
+
+
+
 
     running = True
     pause = False
@@ -223,6 +229,15 @@ if __name__ == '__main__':
                         spawn_wave(wave_dif[5][1] + current_wave // 2,
                                    wave_dif[5][0])
                     current_wave += 1
+        if hero.hp == 0:
+            with open('chet.txt', 'w') as file:
+                file.write(str(hero.kill_count))
+            if hero.kill_count > max_kill_count:
+                max_kill_count = hero.kill_count
+                with open('record.txt', 'w') as file:
+                    file.write(str(max_kill_count))
+            pygame.quit()
+            os.system('python menu.py')
 
         if len(enemy_sprites) == 0:
             btn_color = (174, 186, 0)
@@ -290,10 +305,13 @@ if __name__ == '__main__':
                 if enemy.hp <= 0:
                     enemy.die()
                     if enemy.die_counter == 60:
+                        hero.kill_count += 1
                         enemy_sprites.remove(enemy)
                         if hero.energy <= 9:
                             hero.energy += 1
         tile_sprites.draw(screen)
+        hero.display_kill_count(screen, font, width, height)
+        hero.max_display_kill_count(screen, font, width, height)
         collision_tile_sprites.draw(screen)
         player_sprites.draw(screen)
         enemy_sprites.draw(screen)

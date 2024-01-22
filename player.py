@@ -25,6 +25,10 @@ class Player(pygame.sprite.Sprite):
         self.hp = 100
         self.max_hp = 100
 
+        with open('record.txt', 'r') as file:
+            self.max_kill_count = int(file.read())
+
+        self.kill_count = 0
         self.energy = 0
         self.max_energy = 10
 
@@ -37,6 +41,18 @@ class Player(pygame.sprite.Sprite):
         pressed = pygame.key.get_pressed()
         move = [move_map[key] for key in move_map if pressed[key]]
         return move
+
+    def display_kill_count(self, screen, font, screen_width, screen_height):
+        kill_text = font.render("Убийств: " + str(self.kill_count), True, (255, 255, 255))
+        text_rect = kill_text.get_rect()
+        text_rect.bottomright = (132, 200)  # Положение текста в нижнем правом углу
+        screen.blit(kill_text, text_rect)
+
+    def max_display_kill_count(self, screen, font, screen_width, screen_height):
+        kill_text = font.render("Максимально убийств: " + str(self.max_kill_count), True, (255, 255, 255))
+        text_rect = kill_text.get_rect()
+        text_rect.bottomright = (300, 250)  # Положение текста в нижнем правом углу
+        screen.blit(kill_text, text_rect)
 
     def draw_hp(self, screen, hp_bar_image, font):
         # Размеры изображения полоски здоровья
