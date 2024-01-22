@@ -21,6 +21,8 @@ black = (0, 0, 0)
 
 # Шрифты
 font = pygame.font.Font(None, 36)
+pygame.mixer.music.load('gari.mp3')
+pygame.mixer.music.play(-1)
 
 
 # Функция для отображения текста на кнопке
